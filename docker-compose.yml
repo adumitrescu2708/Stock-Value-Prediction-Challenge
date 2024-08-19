@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  solution-app:
+    env_file:
+      - solution.env
+    container_name: solution
+    build: 
+      context: ./solution
+    restart: always
+    volumes:
+      - type: bind
+        source: ./solution/predict_price_data_files/
+        target: /solution/predict_price_data_files
