@@ -60,25 +60,19 @@ def collect_consecutive_stock_values(max_files_nr):
             # Get the dataset from the .csv file
             dataset = pd.read_csv(os.path.join(DATASET_DIR_NAME, directory, file), header=None)
 
-            # Return an info log if the dataset is empty
-            if dataset.empty:
+            # Log if the dataset is invalid, either empty or less than 10 values
+            if dataset.empty or dataset.shape[0] < 10:
                 if DEBUG_ENABLE:
-                    logger.info("Found empty dataset in %s", file)
+                    logger.info("Insufficient data in dataset in %s", file)
                 continue
 
-            # Assuming that 10 values should be returned
-            if dataset.shape[0] < 10:
-                if DEBUG_ENABLE:
-                    logger.info("Insufficient data in dataset %s", file)
-                continue
-            
             dataset.columns = ["stock", "date", "price"]
 
             # Assume that all values are for the same stock
             if not (dataset['stock'] == dataset['stock'].iloc[0]).all():
                 if DEBUG_ENABLE:
                     logger.info("Invalid stock id found %s", file)
-                continue                
+                continue
 
             # Convert the date entry into a Datetime
             dataset["date"] = pd.to_datetime(dataset["date"], dayfirst=True)
